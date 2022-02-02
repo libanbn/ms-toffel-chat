@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  height: var(--innerHeight, 100vh);
+  width: var(--innerWidth, 100vw);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Sometimes an invisible iframe pops up after hot reload what prevents user from clicking the website */
+iframe {
+  z-index: -1 !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.active-link {
+  background-color: navy;
+  color: #fff;
+  outline: 1px dotted #00f;
+  text-decoration: none;
+}
+
+p {
+  display: inline-block;
+  margin: 0;
+  word-break: break-all;
+    white-space: normal;
+}
+
+.chat-message > * {
+  display: inline-block;
+}
+
+pre {
+  display: flex;
+  flex-direction: column-reverse;
+}
