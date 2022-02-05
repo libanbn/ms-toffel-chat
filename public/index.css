@@ -50,3 +50,19 @@ pre {
   display: flex;
   flex-direction: column-reverse;
 }
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 24px auto 16px;
+  height: calc(100vh - 42px);
+}
+
+.chat-member-list {
+  height: calc(100vh - 54px);
+
+}
+
+button {
+  min-height: 18px;
+}

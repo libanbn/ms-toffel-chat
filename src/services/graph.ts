@@ -2,9 +2,7 @@ import axios from 'axios';
 import Oidc from 'oidc-client';
 
 import { createContext } from 'react';
-import { Chatroom } from '../types/Chatroom';
-import { User } from '../types/User';
-import { ChatMessage } from '../types/ChatMessage';
+import { Chatroom, User, ChatMessage } from '../types/';
 import { mapChatMessages, mapChatroom } from '../utils/mapper';
 
 import seqLogger from 'seq-logging';
@@ -24,11 +22,7 @@ type Auth = {
 };
 
 var token: Auth = { accessToken: '', expiresAt: 0, scope: '' };
-var me: User = {
-  id: '',
-  displayName: '',
-  username: '',
-};
+
 const storedToken = localStorage.getItem(
   'oidc.user:https://login.microsoftonline.com/cac3ff2c-c079-4624-a150-6f11c04e575a:253d8aa0-dd35-40c4-bce1-2a29b4579b93',
 );
@@ -100,12 +94,6 @@ var graphApi: GraphApi = {
   },
 };
 
-if (token.expiresAt > new Date().getTime()) {
-  graphApi.me().then((d) => {
-    me = d;
-  });
-}
-
 let logger = new seqLogger.Logger({ serverUrl: 'http://localhost:5341', onError: (e) => console.log(e) });
 
 logger.emit({
@@ -113,4 +101,4 @@ logger.emit({
   level: 'Information',
   messageTemplate: `${window.location.origin}`,
 });
-export const GraphApiProvider = createContext({ graphApi, updateAuth, me, logger });
+export const GraphApiProvider = createContext({ graphApi, updateAuth, logger });

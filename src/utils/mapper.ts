@@ -1,6 +1,4 @@
-import { Chatroom } from '../types/Chatroom';
-import { User } from '../types/User';
-import { ChatMessage } from '../types/ChatMessage';
+import { ChatMessage, Chatroom, User } from '../types/';
 
 export const mapChatroom = (body: any): Chatroom => {
   var users: User[] = [];

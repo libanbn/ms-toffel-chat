@@ -1,6 +1,6 @@
 import Oidc from 'oidc-client';
 import 'babel-polyfill';
-import { createContext } from 'react';
+import React, { createContext, useCallback, useState } from 'react';
 
 var mgr = new Oidc.UserManager({
   userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
@@ -20,8 +20,11 @@ var mgr = new Oidc.UserManager({
   },
 });
 
-export const OidcProvider = createContext(mgr);
 
-export const authenticate = async () => {
-  await mgr.signinRedirect();
-};
+const login = async () => await mgr.signinRedirect();
+
+const logout = async () => await mgr.signoutRedirect();
+
+export const OidcProvider = createContext({ mgr, login, logout });
+
+

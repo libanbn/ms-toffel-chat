@@ -2,25 +2,32 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { GraphApiProvider } from '../services/graph';
-import { ChatMessage } from '../types/ChatMessage';
-import { Chatroom } from '../types/Chatroom';
-import { User } from '../types/User';
+import { ChatMessage, Chatroom, User } from '../types/';
 import DOMPurify from 'dompurify';
+import { userImg, gearImg, keyImg } from '../assets'
 
 import { dateToHoursAndMinutes } from '../utils/date';
-import { authenticate } from '../services/oidc';
+import { OidcProvider } from '../services/oidc';
 
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1fr);
   gap: 4px;
+
+  & > * {
+    max-height: max-height: calc(var(--innerHeight) - 32px);
+    grid-auto-rows: minmax(min-content, max-content);
+  }
 `;
 
 export const Home: React.FC = () => {
   const { graphApi } = useContext(GraphApiProvider);
+  const { login, logout } = useContext(OidcProvider);
+
   const [chatrooms, setChatrooms] = useState<Chatroom[]>();
   const [chatRoomMessages, setChatRoomMessages] = useState<ChatMessage[]>();
   const { chatId } = useParams<{ chatId: string }>();
+  const [messageInput, setMessageInput] = useState<string>('');
 
   // Current selected chat
   const chat = useMemo(() => {
@@ -49,9 +56,6 @@ export const Home: React.FC = () => {
     if (chatId) graphApi.chatMessages(chatId).then(setChatRoomMessages);
   }, [chatId]);
 
-  // To send messages
-  const [messageInput, setMessageInput] = useState<string>('');
-
   const sendMessage = useCallback(() => {
     if (chat && messageInput) {
       setMessageInput('');
@@ -66,9 +70,16 @@ export const Home: React.FC = () => {
 
   return (
     <>
-      <Wrapper className="window">
-        <div>
-          <ul className="tree-view" style={{ height: 'calc(var(--innerHeight, 100vh) - 4rem)', overflow: 'scroll' }}>
+      <Wrapper className="window content">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateRows: 'auto 20px',
+            height: 'calc(100vh - 54px)',
+            gap: '4px',
+            alignContent: 'stretch',
+          }}>
+          <ul className="tree-view" style={{ overflow: 'scroll' }}>
             <li>
               <details open>
                 <summary>Recent</summary>
@@ -97,19 +108,33 @@ export const Home: React.FC = () => {
               </details>
             </li>
           </ul>
-
-          <div className="status-bar">
-            <div className="title-bar-controls">
-              <button aria-label="Close" style={{ padding: '1rem' }} onClick={authenticate}></button>
-            </div>
+          <div className="status-bar" style={{ gap: '4px' }}>
+            <button
+              className="status-bar-field"
+              onClick={login}
+              style={{ height: '20px', width: '20px', minWidth: '20px', flexGrow: '0' }}>
+              <img src={userImg} alt="User" height="100%" />
+            </button>
+            <button
+              onClick={logout}
+              className="status-bar-field"
+              style={{ height: '20px', width: '20px', minWidth: '20px', flexGrow: '0' }}>
+              <img src={keyImg} alt="User" height="100%" />
+            </button>
+            <div style={{ flex: 1 }} />
+            <button
+              className="status-bar-field"
+              style={{ height: '20px', width: '20px', minWidth: '20px', flexGrow: '0' }}>
+              <img src={gearImg} alt="User" height="100%" />
+            </button>
           </div>
         </div>
 
-        <div className="field-row-stacked" style={{height: 'calc(var(--innerHeight) - 36px)', display: 'grid', gridTemplateRows: '1rem auto 2rem' }}>
+        <div className="content" style={{ display: 'grid', gap: '4px', gridTemplateRows: '1rem auto 2rem' }}>
           <div className="status-bar">
             <p className="status-bar-field">#{chat?.topic}</p>
           </div>
-          <pre style={{ height: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
+          <pre style={{ overflowY: 'scroll', overflowX: 'hidden' }}>
             {chatRoomMessages?.map((msg, i) => (
               <div className="chat-message" key={i}>
                 <span>[{dateToHoursAndMinutes(msg.createdDateTime)}] </span>
@@ -123,21 +148,21 @@ export const Home: React.FC = () => {
             ))}
           </pre>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '19fr 1fr' }}>
+          <div style={{ display: 'grid', gap: '4px', gridTemplateColumns: '19fr 1fr' }}>
             <input type="text" onChange={(e) => setMessageInput(e.target.value)} value={messageInput} />
-            <button onClick={sendMessage}>SEND</button>
+            <button style={{ height: '20px' }} onClick={sendMessage}>
+              SEND
+            </button>
           </div>
         </div>
 
-        <div style={{ maxHeight: 'var(--innerHeight, 100vh)' }}>
-          <ul className="tree-view" style={{ height: '100%', overflowY: 'scroll' }}>
-            {chat?.users?.map((c) => (
-              <li key={c.id}>
-                <Link to="#">{c.username}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className="tree-view chat-member-list" style={{ overflowY: 'scroll' }}>
+          {chat?.users?.map((c) => (
+            <li key={c.id}>
+              <Link to="#">{c.username}</Link>
+            </li>
+          ))}
+        </ul>
       </Wrapper>
     </>
   );

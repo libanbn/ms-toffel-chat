@@ -5,20 +5,20 @@ import { Callback } from './pages/Callback';
 import { GraphApiProvider } from './services/graph';
 import { ControlPanel } from './pages/ControlPanel';
 import { Home } from './pages/Home';
-import { User } from './types/User';
+import { User } from './types/';
 
 import { useEffect } from 'react';
 import { app, window as tauriWindow } from '@tauri-apps/api';
 
 export default function App() {
-  const mgr = useContext(OidcProvider);
+  const oidc = useContext(OidcProvider);
   const graph = useContext(GraphApiProvider);
 
   const [me, setMe] = useState<User>();
 
   useEffect(() => {
     graph.graphApi.me().then(setMe);
-
+    
     const resize = () => {
       document.documentElement.style.setProperty('--innerWidth', `${window.innerWidth | 0}px`);
       document.documentElement.style.setProperty('--innerHeight', `100vh`);
@@ -28,7 +28,7 @@ export default function App() {
   }, []);
 
   return (
-    <OidcProvider.Provider value={mgr}>
+    <OidcProvider.Provider value={oidc}>
       <GraphApiProvider.Provider value={graph}>
         <div className="window">
           <div className="title-bar">
@@ -48,6 +48,10 @@ export default function App() {
               <Route path="/" component={Home} />
             </Switch>
           </BrowserRouter>
+
+          <div className="status-bar">
+            <p className="status-bar-field">test</p>
+          </div>
         </div>
       </GraphApiProvider.Provider>
     </OidcProvider.Provider>
