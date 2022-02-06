@@ -39,7 +39,7 @@ p {
   display: inline-block;
   margin: 0;
   word-break: break-all;
-    white-space: normal;
+  white-space: normal;
 }
 
 .chat-message > * {
@@ -60,7 +60,6 @@ pre {
 
 .chat-member-list {
   height: calc(100vh - 54px);
-
 }
 
 button {
