@@ -1,13 +1,15 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { GraphApiProvider } from '../services/graph';
+import { useGraphApi } from '../hooks/GraphApi';
 import { ChatMessage, Chatroom, User } from '../types/';
 import DOMPurify from 'dompurify';
-import { userImg, gearImg, keyImg } from '../assets'
+import { userImg, gearImg, keyImg } from '../assets';
 
 import { dateToHoursAndMinutes } from '../utils/date';
 import { OidcProvider } from '../services/oidc';
+import { useEvents } from '../hooks/';
+import { EventType } from '../hooks/EventBus';
 
 const Wrapper = styled.div`
   display: grid;
@@ -21,8 +23,9 @@ const Wrapper = styled.div`
 `;
 
 export const Home: React.FC = () => {
-  const { graphApi } = useContext(GraphApiProvider);
+  const { graphApi } = useGraphApi();
   const { login, logout } = useContext(OidcProvider);
+  const { notify, subscribe } = useEvents();
 
   const [chatrooms, setChatrooms] = useState<Chatroom[]>();
   const [chatRoomMessages, setChatRoomMessages] = useState<ChatMessage[]>();
@@ -126,6 +129,13 @@ export const Home: React.FC = () => {
               className="status-bar-field"
               style={{ height: '20px', width: '20px', minWidth: '20px', flexGrow: '0' }}>
               <img src={gearImg} alt="User" height="100%" />
+            </button>
+
+            <button
+              onClick={() => {
+                notify({ eventType: EventType.BTN_CLICKED, payload: {} });
+              }}>
+              x
             </button>
           </div>
         </div>

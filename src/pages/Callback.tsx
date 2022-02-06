@@ -1,11 +1,11 @@
 import { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { OidcProvider } from '../services/oidc';
-import { GraphApiProvider } from '../services/graph';
+import { useGraphApi } from '../hooks/GraphApi';
 
 export const Callback: React.FC = () => {
-  const {mgr: oidc} = useContext(OidcProvider);
-  const { updateAuth } = useContext(GraphApiProvider);
+  const { mgr: oidc } = useContext(OidcProvider);
+  const { updateAuth } = useGraphApi();
   const history = useHistory();
 
   useEffect(() => {

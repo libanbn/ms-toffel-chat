@@ -1,14 +1,13 @@
 import { useContext, useState } from 'react';
-import { GraphApiProvider } from '../services/graph';
+import { useGraphApi } from '../hooks/GraphApi';
 import { OidcProvider } from '../services/oidc';
 
 export const ControlPanel: React.FC = () => {
-  const { graphApi } = useContext(GraphApiProvider);
+  const { graphApi } = useGraphApi();
 
   const [data, setData] = useState<string>('');
   const [input, setInput] = useState<string>('');
   const { login, logout } = useContext(OidcProvider);
-
 
   return (
     <>
